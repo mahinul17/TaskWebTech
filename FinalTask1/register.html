@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Registration</title>
+</head>
+<body>
+
+  <h2>Student Registration Form</h2>
+
+  <form action="register.php" method="POST">
+
+    <label>Full Name:</label><br>
+    <input type="text" name="full_name"><br><br>
+
+    <label>Email Address:</label><br>
+    <input type="email" name="email"><br><br>
+
+    <label>Username:</label><br>
+    <input type="text" name="username"><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password"><br><br>
+
+    <label>Confirm Password:</label><br>
+    <input type="password" name="confirm_password"><br><br>
+
+    <label>Age:</label><br>
+    <input type="number" name="age"><br><br>
+
+    <label>Gender:</label><br>
+    <input type="radio" name="gender" value="Male"> Male
+    <input type="radio" name="gender" value="Female"> Female<br><br>
+
+    <label>Course Selection:</label><br>
+    <select name="course">
+      <option value="">-- Select Course --</option>
+      <option value="Computer Science">Computer Science</option>
+      <option value="Electrical Engineering">Electrical Engineering</option>
+      <option value="Business Administration">Business Administration</option>
+      <option value="Mechanical Engineering">Mechanical Engineering</option>
+      <option value="Civil Engineering">Civil Engineering</option>
+      <option value="Medicine">Medicine</option>
+      <option value="Law">Law</option>
+    </select><br><br>
+
+    <input type="checkbox" name="terms" value="1">
+    I agree to the Terms &amp; Conditions<br><br>
+
+    <input type="submit" name="register" value="Register">
+
+  </form>
+
+</body>
+</html>

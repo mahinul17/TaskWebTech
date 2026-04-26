@@ -1,81 +1,88 @@
 <?php
+session_start();
 
 $errors = [];
 $success = false;
 
-$full_name        = '';
-$email            = '';
-$username         = '';
-$age              = '';
-$gender           = '';
-$course           = '';
+$full_name = '';
+$email     = '';
+$username  = '';
+$age       = '';
+$gender    = '';
+$course    = '';
 
 if (isset($_POST['register'])) {
 
-  
-    $full_name        = trim($_POST['full_name']        ?? '');
-    $email            = trim($_POST['email']            ?? '');
-    $username         = trim($_POST['username']         ?? '');
-    $password         =      $_POST['password']         ?? '';
-    $confirm_password =      $_POST['confirm_password'] ?? '';
-    $age              = trim($_POST['age']              ?? '');
-    $gender           = trim($_POST['gender']           ?? '');
-    $course           = trim($_POST['course']           ?? '');
-    $terms            =      $_POST['terms']            ?? '';
+    $full_name        = trim($_POST['full_name']);
+    $email            = trim($_POST['email']);
+    $username         = trim($_POST['username']);
+    $password         = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $age              = trim($_POST['age']);
+    $gender           = isset($_POST['gender']) ? $_POST['gender'] : '';
+    $course           = $_POST['course'];
+    $terms            = isset($_POST['terms']) ? $_POST['terms'] : '';
 
-
-    if ($full_name === '')        $errors[] = "Full Name is required.";
-    if ($email === '')            $errors[] = "Email Address is required.";
-    if ($username === '')         $errors[] = "Username is required.";
-    if ($password === '')         $errors[] = "Password is required.";
-    if ($confirm_password === '') $errors[] = "Confirm Password is required.";
-    if ($age === '')              $errors[] = "Age is required.";
-    if ($gender === '')           $errors[] = "Gender must be selected.";
-    if ($course === '')           $errors[] = "Course must be selected.";
-    if ($terms !== '1')           $errors[] = "You must accept the Terms & Conditions.";
-
+    if ($full_name === '')        $errors['full_name']        = "Full Name is required.";
+    if ($email === '')            $errors['email']            = "Email Address is required.";
+    if ($username === '')         $errors['username']         = "Username is required.";
+    if ($password === '')         $errors['password']         = "Password is required.";
+    if ($confirm_password === '') $errors['confirm_password'] = "Confirm Password is required.";
+    if ($age === '')              $errors['age']              = "Age is required.";
+    if ($gender === '')           $errors['gender']           = "Gender must be selected.";
+    if ($course === '')           $errors['course']           = "Course must be selected.";
+    if ($terms !== '1')           $errors['terms']            = "You must accept the Terms & Conditions.";
 
     if ($full_name !== '' && !preg_match('/^[a-zA-Z ]+$/', $full_name)) {
-        $errors[] = "Full Name must contain only letters and spaces.";
+        $errors['full_name'] = "Full Name must contain only letters and spaces.";
     }
 
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Email Address is not valid.";
+        $errors['email'] = "Email Address is not valid.";
     }
 
     if ($username !== '' && strlen($username) < 5) {
-        $errors[] = "Username must be at least 5 characters long.";
+        $errors['username'] = "Username must be at least 5 characters long.";
     }
 
-
     if ($password !== '' && strlen($password) < 6) {
-        $errors[] = "Password must be at least 6 characters long.";
+        $errors['password'] = "Password must be at least 6 characters long.";
     }
 
     if ($password !== '' && $confirm_password !== '' && $password !== $confirm_password) {
-        $errors[] = "Password and Confirm Password do not match.";
+        $errors['confirm_password'] = "Password and Confirm Password do not match.";
     }
 
     if ($age !== '' && (int)$age < 18) {
-        $errors[] = "Age must be 18 or above.";
+        $errors['age'] = "Age must be 18 or above.";
     }
 
     if ($gender !== '' && !in_array($gender, ['Male', 'Female'])) {
-        $errors[] = "Gender selection is invalid.";
+        $errors['gender'] = "Gender selection is invalid.";
     }
-
 
     if (empty($errors)) {
         $success = true;
+
+        $_SESSION['registered_user'] = array(
+            'full_name' => $full_name,
+            'email'     => $email,
+            'username'  => $username,
+            'age'       => $age,
+            'gender'    => $gender,
+            'course'    => $course
+        );
+        $_SESSION['registration_status'] = 'success';
+
+        setcookie('last_registered_user', $username, time() + (7 * 24 * 60 * 60), '/');
     }
 }
-
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Student Registration</title>
+    <meta charset="UTF-8">
+    <title>Registration Result</title>
 </head>
 <body>
 
@@ -83,66 +90,136 @@ if (isset($_POST['register'])) {
 
 <?php if ($success): ?>
 
-  <h3>Registration Successful!</h3>
-  <p><strong>Full Name:</strong> <?= htmlspecialchars($full_name) ?></p>
-  <p><strong>Email:</strong> <?= htmlspecialchars($email) ?></p>
-  <p><strong>Username:</strong> <?= htmlspecialchars($username) ?></p>
-  <p><strong>Age:</strong> <?= htmlspecialchars($age) ?></p>
-  <p><strong>Gender:</strong> <?= htmlspecialchars($gender) ?></p>
-  <p><strong>Course:</strong> <?= htmlspecialchars($course) ?></p>
+    <h3>Registration Successful!</h3>
+
+    <?php
+    if (isset($_SESSION['registered_user'])) {
+        $user = $_SESSION['registered_user'];
+    ?>
+        <p><b>Full Name:</b> <?php echo htmlspecialchars($user['full_name']); ?></p>
+        <p><b>Email:</b> <?php echo htmlspecialchars($user['email']); ?></p>
+        <p><b>Username:</b> <?php echo htmlspecialchars($user['username']); ?></p>
+        <p><b>Age:</b> <?php echo htmlspecialchars($user['age']); ?></p>
+        <p><b>Gender:</b> <?php echo htmlspecialchars($user['gender']); ?></p>
+        <p><b>Course:</b> <?php echo htmlspecialchars($user['course']); ?></p>
+    <?php } ?>
+
+    <?php
+
+    if (isset($_COOKIE['last_registered_user'])) {
+        echo '<p><i>Cookie saved: Welcome back next time, <b>' . htmlspecialchars($_COOKIE['last_registered_user']) . '</b>! Your username has been remembered for 7 days.</i></p>';
+    }
+    ?>
+
+    <br>
+    <a href="register.html">Go back to Register</a>
 
 <?php else: ?>
 
-  <?php if (!empty($errors)): ?>
-    <h3>Please fix the following errors:</h3>
-    <ul>
-      <?php foreach ($errors as $error): ?>
-        <li><?= htmlspecialchars($error) ?></li>
-      <?php endforeach; ?>
-    </ul>
-  <?php endif; ?>
+    <?php
+    if (isset($_COOKIE['last_registered_user'])) {
+        echo '<p><i>Welcome back, <b>' . htmlspecialchars($_COOKIE['last_registered_user']) . '</b>! (Remembered by cookie)</i></p>';
+    }
+    ?>
 
-  <form action="register.php" method="POST">
+    <?php if (isset($_POST['register']) && !empty($errors)): ?>
+        <p style="color:red;">Please fix the errors below and try again.</p>
+    <?php endif; ?>
 
-    <label>Full Name:</label><br>
-    <input type="text" name="full_name" value="<?= htmlspecialchars($full_name) ?>"><br><br>
+    <form method="POST" action="register.php">
 
-    <label>Email Address:</label><br>
-    <input type="email" name="email" value="<?= htmlspecialchars($email) ?>"><br><br>
+    <table border="0" cellpadding="5">
 
-    <label>Username:</label><br>
-    <input type="text" name="username" value="<?= htmlspecialchars($username) ?>"><br><br>
+        <tr>
+            <td>Full Name:</td>
+            <td>
+                <input type="text" name="full_name" value="<?php echo htmlspecialchars($full_name); ?>">
+                <?php if (isset($errors['full_name'])) echo '<span style="color:red;">' . $errors['full_name'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <label>Password:</label><br>
-    <input type="password" name="password"><br><br>
+        <tr>
+            <td>Email Address:</td>
+            <td>
+                <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>">
+                <?php if (isset($errors['email'])) echo '<span style="color:red;">' . $errors['email'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <label>Confirm Password:</label><br>
-    <input type="password" name="confirm_password"><br><br>
+        <tr>
+            <td>Username:</td>
+            <td>
+                <input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>">
+                <?php if (isset($errors['username'])) echo '<span style="color:red;">' . $errors['username'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <label>Age:</label><br>
-    <input type="number" name="age" value="<?= htmlspecialchars($age) ?>"><br><br>
+        <tr>
+            <td>Password:</td>
+            <td>
+                <input type="password" name="password">
+                <?php if (isset($errors['password'])) echo '<span style="color:red;">' . $errors['password'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <label>Gender:</label><br>
-    <input type="radio" name="gender" value="Male" <?= ($gender === 'Male') ? 'checked' : '' ?>> Male
-    <input type="radio" name="gender" value="Female" <?= ($gender === 'Female') ? 'checked' : '' ?>> Female<br><br>
+        <tr>
+            <td>Confirm Password:</td>
+            <td>
+                <input type="password" name="confirm_password">
+                <?php if (isset($errors['confirm_password'])) echo '<span style="color:red;">' . $errors['confirm_password'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <label>Course Selection:</label><br>
-    <select name="course">
-      <option value="">-- Select Course --</option>
-      <option value="Computer Science"       <?= ($course === 'Computer Science')       ? 'selected' : '' ?>>Computer Science</option>
-      <option value="Electrical Engineering" <?= ($course === 'Electrical Engineering') ? 'selected' : '' ?>>Electrical Engineering</option>
-      <option value="Business Administration"<?= ($course === 'Business Administration')? 'selected' : '' ?>>Business Administration</option>
-      <option value="Mechanical Engineering" <?= ($course === 'Mechanical Engineering') ? 'selected' : '' ?>>Mechanical Engineering</option>
-      <option value="Civil Engineering"      <?= ($course === 'Civil Engineering')      ? 'selected' : '' ?>>Civil Engineering</option>
-      <option value="Medicine"               <?= ($course === 'Medicine')               ? 'selected' : '' ?>>Medicine</option>
-      <option value="Law"                    <?= ($course === 'Law')                    ? 'selected' : '' ?>>Law</option>
-    </select><br><br>
+        <tr>
+            <td>Age:</td>
+            <td>
+                <input type="number" name="age" value="<?php echo htmlspecialchars($age); ?>">
+                <?php if (isset($errors['age'])) echo '<span style="color:red;">' . $errors['age'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <input type="checkbox" name="terms" value="1"> I agree to the Terms &amp; Conditions<br><br>
+        <tr>
+            <td>Gender:</td>
+            <td>
+                <input type="radio" name="gender" value="Male" <?php if($gender === 'Male') echo 'checked'; ?>> Male
+                <input type="radio" name="gender" value="Female" <?php if($gender === 'Female') echo 'checked'; ?>> Female
+                <?php if (isset($errors['gender'])) echo '<span style="color:red;">' . $errors['gender'] . '</span>'; ?>
+            </td>
+        </tr>
 
-    <input type="submit" name="register" value="Register">
+        <tr>
+            <td>Course Selection:</td>
+            <td>
+                <select name="course">
+                    <option value="">-- Select Course --</option>
+                    <option value="Computer Science"        <?php if($course === 'Computer Science')        echo 'selected'; ?>>Computer Science</option>
+                    <option value="Electrical Engineering"  <?php if($course === 'Electrical Engineering')  echo 'selected'; ?>>Electrical Engineering</option>
+                    <option value="Business Administration" <?php if($course === 'Business Administration') echo 'selected'; ?>>Business Administration</option>
+                    <option value="Mechanical Engineering"  <?php if($course === 'Mechanical Engineering')  echo 'selected'; ?>>Mechanical Engineering</option>
+                    <option value="Civil Engineering"       <?php if($course === 'Civil Engineering')       echo 'selected'; ?>>Civil Engineering</option>
+                    <option value="Medicine"                <?php if($course === 'Medicine')                echo 'selected'; ?>>Medicine</option>
+                    <option value="Law"                     <?php if($course === 'Law')                     echo 'selected'; ?>>Law</option>
+                </select>
+                <?php if (isset($errors['course'])) echo '<span style="color:red;">' . $errors['course'] . '</span>'; ?>
+            </td>
+        </tr>
 
-  </form>
+        <tr>
+            <td>Terms &amp; Conditions:</td>
+            <td>
+                <input type="checkbox" name="terms" value="1"> I agree to the Terms &amp; Conditions
+                <?php if (isset($errors['terms'])) echo '<span style="color:red;">' . $errors['terms'] . '</span>'; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td><input type="submit" name="register" value="Register"></td>
+        </tr>
+
+    </table>
+
+    </form>
 
 <?php endif; ?>
 

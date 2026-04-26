@@ -1,55 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Student Registration</title>
+    <meta charset="UTF-8">
+    <title>Student Registration</title>
 </head>
 <body>
 
-  <h2>Student Registration Form</h2>
+<h2>Student Registration Form</h2>
 
-  <form action="register.php" method="POST">
+<form method="POST" action="register.php">
 
-    <label>Full Name:</label><br>
-    <input type="text" name="full_name"><br><br>
+<table border="0" cellpadding="5">
 
-    <label>Email Address:</label><br>
-    <input type="email" name="email"><br><br>
+    <tr>
+        <td>Full Name:</td>
+        <td><input type="text" name="full_name"></td>
+    </tr>
 
-    <label>Username:</label><br>
-    <input type="text" name="username"><br><br>
+    <tr>
+        <td>Email Address:</td>
+        <td><input type="email" name="email"></td>
+    </tr>
 
-    <label>Password:</label><br>
-    <input type="password" name="password"><br><br>
+    <tr>
+        <td>Username:</td>
+        <td><input type="text" name="username"></td>
+    </tr>
 
-    <label>Confirm Password:</label><br>
-    <input type="password" name="confirm_password"><br><br>
+    <tr>
+        <td>Password:</td>
+        <td><input type="password" name="password"></td>
+    </tr>
 
-    <label>Age:</label><br>
-    <input type="number" name="age"><br><br>
+    <tr>
+        <td>Confirm Password:</td>
+        <td><input type="password" name="confirm_password"></td>
+    </tr>
 
-    <label>Gender:</label><br>
-    <input type="radio" name="gender" value="Male"> Male
-    <input type="radio" name="gender" value="Female"> Female<br><br>
+    <tr>
+        <td>Age:</td>
+        <td><input type="number" name="age"></td>
+    </tr>
 
-    <label>Course Selection:</label><br>
-    <select name="course">
-      <option value="">-- Select Course --</option>
-      <option value="Computer Science">Computer Science</option>
-      <option value="Electrical Engineering">Electrical Engineering</option>
-      <option value="Business Administration">Business Administration</option>
-      <option value="Mechanical Engineering">Mechanical Engineering</option>
-      <option value="Civil Engineering">Civil Engineering</option>
-      <option value="Medicine">Medicine</option>
-      <option value="Law">Law</option>
-    </select><br><br>
+    <tr>
+        <td>Gender:</td>
+        <td>
+            <input type="radio" name="gender" value="Male"> Male
+            <input type="radio" name="gender" value="Female"> Female
+        </td>
+    </tr>
 
-    <input type="checkbox" name="terms" value="1">
-    I agree to the Terms &amp; Conditions<br><br>
+    <tr>
+        <td>Course Selection:</td>
+        <td>
+            <select name="course">
+                <option value="">-- Select Course --</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Business Administration">Business Administration</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Medicine">Medicine</option>
+                <option value="Law">Law</option>
+            </select>
+        </td>
+    </tr>
 
-    <input type="submit" name="register" value="Register">
+    <tr>
+        <td>Terms &amp; Conditions:</td>
+        <td>
+            <input type="checkbox" name="terms" value="1"> I agree to the Terms &amp; Conditions
+        </td>
+    </tr>
 
-  </form>
+    <tr>
+        <td></td>
+        <td><input type="submit" name="register" value="Register"></td>
+    </tr>
+
+</table>
+
+</form>
 
 </body>
 </html>

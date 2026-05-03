@@ -3,14 +3,12 @@ include "config.php";
 
 $success = $error = "";
 
-// Fetch student data to pre-fill the form
 if (isset($_GET["id"])) {
     $id     = $_GET["id"];
     $result = $conn->query("SELECT * FROM students WHERE id='$id'");
     $row    = $result->fetch_assoc();
 }
 
-// Handle update submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $id         = $_POST["id"];
@@ -28,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($conn->query($sql) === TRUE) {
             $success = "Student record updated successfully.";
 
-            // Refresh row data to show updated values
             $result = $conn->query("SELECT * FROM students WHERE id='$id'");
             $row    = $result->fetch_assoc();
         } else {
@@ -68,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <form method="post" action="">
 
-    <!-- Hidden field to carry the student ID -->
     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
 
     <label>Student Name</label>
